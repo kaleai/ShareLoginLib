@@ -1,9 +1,8 @@
 package com.liulishuo.share;
 
-import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
-import com.sina.weibo.sdk.api.share.WeiboShareSDK;
-import com.tencent.mm.sdk.openapi.IWXAPI;
-import com.tencent.mm.sdk.openapi.WXAPIFactory;
+import java.io.File;
+import java.util.List;
+import java.util.Locale;
 
 import android.app.Application;
 import android.content.Context;
@@ -13,9 +12,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import java.io.File;
-import java.util.List;
-import java.util.Locale;
+import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
+import com.sina.weibo.sdk.api.share.WeiboShareSDK;
+import com.sina.weibo.sdk.utils.LogUtil;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 /**
  * Created by echo on 5/18/15.
@@ -26,13 +27,19 @@ import java.util.Locale;
  */
 public class ShareBlock {
 
-    private static Config config;
+    public static final String TAG = "ShareLoginLib";
+
+    public static final String KEY_IS_LOGIN_TYPE = "action_type";
 
     private ShareBlock() {
     }
 
     public static void init(Application application, @NonNull Config cfg) {
-        config = cfg;
+        if (cfg.isDebug) {
+            LogUtil.enableLog();
+        } else {
+            LogUtil.disableLog();
+        }
 
         if (TextUtils.isEmpty(Config.pathTemp)) {
             if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
@@ -50,10 +57,6 @@ public class ShareBlock {
                 }
             }
         }
-    }
-
-    public static Config getConfig() {
-        return config;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -122,8 +125,7 @@ public class ShareBlock {
         }
 
         /**
-         * 初始化临时文件地址，这里仅仅是为了qq分享用的。
-         * 这里必须用外部存储器，因为qq会读取这个目录下的图片文件!!!
+         * 这里必须用外部存储器，因为第三方app会读取这个目录下的图片文件!!!
          */
         public Config picTempFile(@Nullable String tempPath) {
             pathTemp = tempPath;

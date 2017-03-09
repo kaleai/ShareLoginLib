@@ -1,6 +1,6 @@
 package com.liulishuo.engzo;
 
-import com.liulishuo.share.bean.AuthUserInfo;
+import com.liulishuo.share.AuthUserInfo;
 import com.liulishuo.share.LoginManager;
 import com.liulishuo.share.UserInfoManager;
 import com.liulishuo.share.type.LoginType;

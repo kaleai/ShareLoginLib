@@ -1,8 +1,8 @@
 package com.liulishuo.share.content;
 
-import com.liulishuo.share.type.ContentType;
-
 import android.support.annotation.NonNull;
+
+import com.liulishuo.share.type.ContentType;
 
 /**
  * Created by echo on 5/18/15.
@@ -14,6 +14,7 @@ public class ShareContentText implements ShareContent {
 
     /**
      * 给QQ、微博、微信使用
+     *
      * @param summary 分享的文字内容
      */
     public ShareContentText(@NonNull String summary) {
@@ -36,12 +37,12 @@ public class ShareContentText implements ShareContent {
     }
 
     @Override
-    public byte[] getImageBmpBytes() {
+    public byte[] getThumbBmpBytes() {
         return null;
     }
 
     @Override
-    public String getImagePicUrl() {
+    public String getLargeBmpPath() {
         return null;
     }
 

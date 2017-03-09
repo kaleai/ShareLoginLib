@@ -1,12 +1,18 @@
 package com.liulishuo.share.content;
 
-import com.liulishuo.share.type.ContentType;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
-import java.io.ByteArrayOutputStream;
+import com.liulishuo.share.ShareBlock;
+import com.liulishuo.share.type.ContentType;
 
 /**
  * Created by echo on 5/18/15.
@@ -17,23 +23,20 @@ public class ShareContentPic implements ShareContent {
     /**
      * 图片的byte数组
      */
-    protected byte[] bitmapBytes;
+    private byte[] thumbBmpBytes;
+
+    private String largeBmpPath;
 
     /**
-     * 图片的url
+     * @param thumbBmp 如果需要分享图片，则必传
      */
-    protected String imageUrl;
-
-    /**
-     * @param bitmap      如果需要分享图片，则必传
-     * @param imagePicUrl 分享图片的url，能传则传，仅供QQ分享使用
-     *                    目前不支持https的图片！
-     */
-    public ShareContentPic(@Nullable Bitmap bitmap, @Nullable String imagePicUrl) {
-        if (bitmap != null) {
-            this.bitmapBytes = getThumbImageByteArr(bitmap);
+    public ShareContentPic(@Nullable Bitmap thumbBmp, @Nullable Bitmap largeBmp) {
+        if (thumbBmp != null) {
+            thumbBmpBytes = getImageThumbByteArr(thumbBmp);
         }
-        this.imageUrl = imagePicUrl;
+        if (largeBmp != null) {
+            largeBmpPath = saveLargeBitmap(largeBmp);
+        }
     }
 
     @Override
@@ -52,15 +55,14 @@ public class ShareContentPic implements ShareContent {
     }
 
     @Override
-    public byte[] getImageBmpBytes() {
-        return bitmapBytes;
+    public byte[] getThumbBmpBytes() {
+        return thumbBmpBytes;
     }
 
     @Override
-    public String getImagePicUrl() {
-        return imageUrl;
+    public String getLargeBmpPath() {
+        return largeBmpPath;
     }
-
 
     @Override
     public String getMusicUrl() {
@@ -73,13 +75,16 @@ public class ShareContentPic implements ShareContent {
         return ContentType.PIC;
     }
 
-    public void setBitmap(@NonNull Bitmap bitmap) {
-        this.bitmapBytes = getThumbImageByteArr(bitmap);
-    }
-
     private
     @Nullable
-    byte[] getThumbImageByteArr(@NonNull Bitmap bitmap) {
+    byte[] getImageThumbByteArr(@NonNull Bitmap bmp) {
+        final Bitmap bitmap;
+        if (bmp.getWidth() > 250 || bmp.getHeight() > 250) {
+            bitmap = ThumbnailUtils.extractThumbnail(bmp, 250, 250);
+        } else {
+            bitmap = bmp;
+        }
+
         byte[] thumbData = null;
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -90,5 +95,35 @@ public class ShareContentPic implements ShareContent {
             e.printStackTrace();
         }
         return thumbData;
+    }
+
+    /**
+     * 此方法是耗时操作，如果对于特别大的图，那么需要做异步
+     */
+    private String saveLargeBitmap(Bitmap bitmap) {
+        String path = ShareBlock.Config.pathTemp;
+        if (!TextUtils.isEmpty(path)) {
+            String imagePath = path + "sl_large_pic";
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(imagePath);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } finally {
+                if (fos != null) {
+                    try {
+                        fos.flush();
+                        fos.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+//                    bitmap.recycle();
+                }
+            }
+            return imagePath;
+        } else {
+            return null;
+        }
     }
 }

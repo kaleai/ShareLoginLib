@@ -17,14 +17,23 @@
 #}
 
 # ————————  微信 start    ————————
--keep class com.tencent.mm.sdk.** { *;}
+-keep class com.tencent.mm.opensdk.** {
+   *;
+}
+-keep class com.tencent.wxop.** {
+   *;
+}
+-keep class com.tencent.mm.sdk.** {
+   *;
+}
 # ————————  微信 end    ————————
 
 # ————————  微博 start    ————————   
--keep class com.sina.weibo.sdk.api.* { *; }
+-keep class com.sina.weibo.sdk.api.* {*;}
 # ————————  微微博 end    ————————
 
 # ————————  qq start    ————————
+-keep class * extends android.app.Dialog {*;}
 -keep class com.tencent.open.TDialog$*
 -keep class com.tencent.open.TDialog$* {*;}
 -keep class com.tencent.open.PKDialog

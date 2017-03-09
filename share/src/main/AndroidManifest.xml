@@ -14,15 +14,7 @@
         <!-- ============================= weibo ============================= -->
 
         <activity
-            android:name=".weibo.SL_WeiBoLoginActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            />
-
-        <!-- 调用微博分享的activity需要按照下方进行设置intent-filter -->
-        <activity
-            android:name=".weibo.SL_WeiBoShareActivity"
+            android:name=".activity.SL_WeiBoHandlerActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
@@ -44,14 +36,7 @@
         <!-- ============================= qq ============================= -->
 
         <activity
-            android:name=".qq.SL_QQLoginActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            />
-
-        <activity
-            android:name=".qq.SL_QQShareActivity"
+            android:name=".activity.SL_QQHandlerActivity"
             android:configChanges="keyboardHidden|orientation"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
@@ -86,9 +71,17 @@
 
         <!-- 处理微信回调的Activity -->
         <activity
+            android:name=".activity.SL_WeiXinHandlerActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            />
+
+        <activity-alias
             android:name="${applicationId}.wxapi.WXEntryActivity"
             android:exported="true"
             android:screenOrientation="portrait"
+            android:targetActivity="com.liulishuo.share.activity.SL_WeiXinHandlerActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             />
 

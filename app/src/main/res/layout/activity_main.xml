@@ -11,8 +11,8 @@
 
     <ImageView
         android:id="@+id/temp_pic_iv"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_gravity="center|right"
         android:contentDescription="default pic"
         tools:background="#aaaaaa"
@@ -129,6 +129,14 @@
             android:layout_height="40dp"
             android:onClick="onClick"
             android:text="分享到微信朋友圈"
+            />
+
+        <Button
+            android:id="@+id/分享到微信收藏"
+            android:layout_width="180dp"
+            android:layout_height="40dp"
+            android:onClick="onClick"
+            android:text="分享到微信收藏"
             />
 
         <LinearLayout

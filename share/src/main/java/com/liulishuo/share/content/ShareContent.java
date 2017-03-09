@@ -1,8 +1,8 @@
 package com.liulishuo.share.content;
 
-import com.liulishuo.share.type.ContentType;
-
 import java.io.Serializable;
+
+import com.liulishuo.share.type.ContentType;
 
 /**
  * Created by echo on 5/18/15.
@@ -13,7 +13,8 @@ public interface ShareContent extends Serializable {
     /**
      * @return 分享的方式
      */
-    @ContentType int getType();
+    @ContentType
+    int getType();
 
     /**
      * 分享的描述信息(摘要)
@@ -31,14 +32,14 @@ public interface ShareContent extends Serializable {
     String getURL();
 
     /**
-     * 分享的图片
+     * 分享的缩略图片
      */
-    byte[] getImageBmpBytes();
+    byte[] getThumbBmpBytes();
 
     /**
-     * 分享的图片url
+     * 分享的大图
      */
-    String getImagePicUrl();
+    String getLargeBmpPath();
 
     /**
      * 音频url

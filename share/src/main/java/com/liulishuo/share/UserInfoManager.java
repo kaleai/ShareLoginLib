@@ -1,6 +1,9 @@
 package com.liulishuo.share;
 
-import com.liulishuo.share.bean.AuthUserInfo;
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 import com.liulishuo.share.type.LoginType;
 import com.sina.weibo.sdk.exception.WeiboException;
 import com.sina.weibo.sdk.net.AsyncWeiboRunner;
@@ -9,10 +12,6 @@ import com.sina.weibo.sdk.net.WeiboParameters;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -124,6 +123,22 @@ public class UserInfoManager {
     // 微信
     ///////////////////////////////////////////////////////////////////////////
 
+    /**
+     * {
+     * "openid":"OPENID",
+     * "nickname":"NICKNAME",
+     * "sex":1,
+     * "province":"PROVINCE",
+     * "city":"CITY",
+     * "country":"COUNTRY",
+     * "headimgurl": "https://avatars3.githubusercontent.com/u/9552155?v=3&s=460",
+     * "privilege":[
+     * "PRIVILEGE1",
+     * "PRIVILEGE2"
+     * ],
+     * "unionid": " o6_bmasdasdsad6_2sgVt7hMZOPfL"
+     * }
+     */
     public static void getWeiXinUserInfo(Context context, @NonNull final String accessToken, @NonNull final String uid,
             @Nullable final UserInfoListener listener) {
 
@@ -139,6 +154,7 @@ public class UserInfoManager {
                 AuthUserInfo userInfo = new AuthUserInfo();
                 userInfo.nickName = jsonObj.getString("nickname");
                 userInfo.sex = jsonObj.getString("sex");
+                // 用户头像，最后一个数值代表正方形头像大小（有0、46、64、96、132数值可选，0代表640*640正方形头像），用户没有头像时该项为空
                 userInfo.headImgUrl = jsonObj.getString("headimgurl");
                 userInfo.userId = jsonObj.getString("unionid");
                 return userInfo;

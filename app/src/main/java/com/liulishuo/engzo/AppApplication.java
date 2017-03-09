@@ -3,15 +3,12 @@ package com.liulishuo.engzo;
 import android.app.Application;
 import android.util.Log;
 
-import com.liulishuo.demo.BuildConfig;
 import com.liulishuo.share.ShareBlock;
-import com.liulishuo.share.ShareLoginApp;
 
 /**
  * @author Kale
  * @date 2016/8/11
  */
-@ShareLoginApp(packageName = BuildConfig.APPLICATION_ID)
 public class AppApplication extends Application {
 
     private static final String TAG = "Application";

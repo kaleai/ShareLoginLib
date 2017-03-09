@@ -12,3 +12,5 @@ local.properties
 .gradle/
 /build
 app/src/signed/
+signi.properties
+/signi.keystore

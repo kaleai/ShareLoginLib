@@ -21,8 +21,8 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':lib')
-
+    compile 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:1.0.2'
+    
     provided 'com.android.support:appcompat-v7:24.2.1'
     provided 'io.reactivex:rxjava:1.1.3'
 }

@@ -1,16 +1,8 @@
 package com.liulishuo.engzo;
 
-import com.liulishuo.demo.R;
-import com.liulishuo.share.LoginManager;
-import com.liulishuo.share.ShareBlock;
-import com.liulishuo.share.ShareManager;
-import com.liulishuo.share.content.ShareContent;
-import com.liulishuo.share.content.ShareContentPic;
-import com.liulishuo.share.content.ShareContentText;
-import com.liulishuo.share.content.ShareContentWebPage;
-import com.liulishuo.share.type.LoginType;
-import com.liulishuo.share.type.ShareType;
-import com.squareup.picasso.Picasso;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -24,9 +16,17 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import com.liulishuo.demo.R;
+import com.liulishuo.share.LoginManager;
+import com.liulishuo.share.ShareBlock;
+import com.liulishuo.share.ShareManager;
+import com.liulishuo.share.content.ShareContent;
+import com.liulishuo.share.content.ShareContentPic;
+import com.liulishuo.share.content.ShareContentText;
+import com.liulishuo.share.content.ShareContentWebPage;
+import com.liulishuo.share.type.LoginType;
+import com.liulishuo.share.type.ShareType;
+import com.squareup.picasso.Picasso;
 
 /**
  * 步骤：
@@ -64,34 +64,24 @@ public class MainActivity extends AppCompatActivity {
         userPicIv = (ImageView) findViewById(R.id.user_pic_iv);
         resultTv = (TextView) findViewById(R.id.result);
 
-        assert getResources().getDrawable(R.drawable.kale) != null;
-        final Bitmap imageBmp = ((BitmapDrawable) getResources().getDrawable(R.drawable.kale)).getBitmap();
+        final Bitmap thumbBmp = ((BitmapDrawable) getResources().getDrawable(R.drawable.kale)).getBitmap();
+        final Bitmap largeBmp = ((BitmapDrawable) getResources().getDrawable(R.drawable.large_pic)).getBitmap();
 
-        loadPicFromTempFile();
-        String imagePic = "http://aliimg.changba.com/cache/photo/177593234_200_200.jpg";
-
-//        imagePic = "http://ww1.sinaimg.cn/mw690/854f1e58gw1f8ao1y3xd2j215o15ogrv.jpg";
-
-//        imagePic = "https://ss0.bdstatic.com/5aV1bjqh_Q23odCf/static/superman/img/logo/logo_white_fe6da1ec.png";
-
-        final String imageUrl = imagePic; // 仅仅qq分享的sdk支持url，但是竟然不支持https的图片！！！
-
-        mShareContent = new ShareContentWebPage(TITLE, MSG, URL, imageBmp, imagePic);
-
-        shareTypeRg.check(R.id.rich_text);
         shareTypeRg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.rich_text) {
-                    mShareContent = new ShareContentWebPage(TITLE, MSG, URL, imageBmp, imageUrl);
+                    mShareContent = new ShareContentWebPage(TITLE, MSG, URL, thumbBmp, largeBmp);
                 } else if (checkedId == R.id.only_image) {
-                    mShareContent = new ShareContentPic(imageBmp, imageUrl);
+                    mShareContent = new ShareContentPic(thumbBmp, largeBmp);
                 } else if (checkedId == R.id.only_text) {
                     mShareContent = new ShareContentText("share text");
                 }
             }
         });
+        shareTypeRg.check(R.id.rich_text);
 
+        loadPicFromTempFile();
         Toast.makeText(MainActivity.this, getPackageName(), Toast.LENGTH_SHORT).show();
     }
 
@@ -136,6 +126,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.分享到微信朋友圈:
                 ShareManager.share(this, ShareType.WEIXIN_FRIEND_ZONE, mShareContent, mShareListener);
+                break;
+            case R.id.分享到微信收藏:
+                ShareManager.share(this, ShareType.WEIXIN_FAVORITE, mShareContent, mShareListener);
                 break;
         }
         userInfoTv.setText("");

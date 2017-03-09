@@ -1,4 +1,4 @@
-package com.liulishuo.share.bean;
+package com.liulishuo.share;
 
 /**
  * @author Jack Tony

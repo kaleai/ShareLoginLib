@@ -1,1 +1,1 @@
-include ':share', ':app', ':apt', ':lib'
+include ':share', ':app'

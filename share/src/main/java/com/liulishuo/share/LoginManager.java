@@ -1,14 +1,14 @@
 package com.liulishuo.share;
 
-import com.liulishuo.share.qq.SL_QQLoginActivity;
-import com.liulishuo.share.type.LoginType;
-import com.liulishuo.share.weibo.SL_WeiBoLoginActivity;
-import com.liulishuo.share.weixin.WeiXinLoginManager;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
+import com.liulishuo.share.activity.SL_QQHandlerActivity;
+import com.liulishuo.share.activity.SL_WeiBoHandlerActivity;
+import com.liulishuo.share.activity.SL_WeiXinHandlerActivity;
+import com.liulishuo.share.type.LoginType;
 
 import static com.liulishuo.share.type.LoginType.QQ;
 import static com.liulishuo.share.type.LoginType.WEIBO;
@@ -20,16 +20,26 @@ import static com.liulishuo.share.type.LoginType.WEIXIN;
  */
 public class LoginManager {
 
-    public static
     @Nullable
-    LoginListener listener;
+    public static LoginListener listener;
 
     public static void login(@NonNull Activity activity, @LoginType String type, @Nullable LoginListener listener) {
+        login(activity, type, listener, null);
+    }
+
+    /**
+     * @param respListener 得到微信code的listener。如果不为空，loginListener将不会被自动调用，必须要手动调用。
+     */
+    public static void login(@NonNull Activity activity, @LoginType String type,
+            @Nullable LoginListener listener, @Nullable LoginRespListener respListener) {
         LoginManager.listener = listener;
         switch (type) {
             case QQ:
                 if (ShareBlock.isQQInstalled(activity)) {
-                    activity.startActivity(new Intent(activity, SL_QQLoginActivity.class));
+                    activity.startActivity(
+                            new Intent(activity, SL_QQHandlerActivity.class)
+                                    .putExtra(ShareBlock.KEY_IS_LOGIN_TYPE, true)
+                    );
                     activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 } else {
                     if (listener != null) {
@@ -38,12 +48,17 @@ public class LoginManager {
                 }
                 break;
             case WEIBO:
-                activity.startActivity(new Intent(activity, SL_WeiBoLoginActivity.class));
+                activity.startActivity(
+                        new Intent(activity, SL_WeiBoHandlerActivity.class)
+                                .putExtra(ShareBlock.KEY_IS_LOGIN_TYPE, true)
+                );
                 activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 break;
             case WEIXIN:
                 if (ShareBlock.isWeiXinInstalled(activity)) {
-                    new WeiXinLoginManager().login(activity.getApplicationContext());
+                    SL_WeiXinHandlerActivity.respListener = respListener;
+                    SL_WeiXinHandlerActivity.login(activity.getApplicationContext());
+                    activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 } else {
                     if (listener != null) {
                         listener.onError("未安装微信");
@@ -55,6 +70,7 @@ public class LoginManager {
 
     public static void recycle() {
         listener = null;
+        SL_WeiXinHandlerActivity.respListener = null;
     }
 
     public interface LoginListener {
@@ -64,6 +80,11 @@ public class LoginManager {
         void onError(String msg);
 
         void onCancel();
+    }
+
+    public interface LoginRespListener {
+
+        void onLoginResp(String respCode, LoginManager.LoginListener listener);
     }
 
 }

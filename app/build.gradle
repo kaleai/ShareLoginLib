@@ -1,9 +1,16 @@
 apply plugin: 'com.android.application'
 
+Properties props = new Properties()
+File f = file(rootProject.file("signi.properties"))
+if (!f.exists()) {
+    f = file(rootProject.file("gradle.properties"))
+}
+props.load(new FileInputStream(f))
+
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.2"
-    
+
     defaultConfig {
         applicationId "com"
         minSdkVersion 18
@@ -11,62 +18,39 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+        manifestPlaceholders = [tencentAuthId: props['TENCENT_AUTHID']]
     }
 
     signingConfigs {
         release {
-            // 这里换成你自己的签名等信息
-            storeFile file(STORE_FILE_PATH)
-            storePassword STORE_PASSWORD
-            keyAlias KEY_ALIAS
-            keyPassword KEY_PASSWORD
+            storeFile file(props['STORE_FILE_PATH'])
+            storePassword props['STORE_PASSWORD']
+            keyAlias props['KEY_ALIAS']
+            keyPassword props['KEY_PASSWORD']
         }
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix '.liulishuo.debug'
+        }
         release {
             minifyEnabled false
             shrinkResources false // 是否去除无效的资源文件
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
             applicationIdSuffix '.liulishuo.release'
-            manifestPlaceholders = [
-                    // 这里的tencent123456是暂时测试用的appId
-                    "tencentAuthId": "tencent123456",
-            ]
-        }
-        debug{
-            applicationIdSuffix '.liulishuo.debug'
-            manifestPlaceholders = [
-                    // 这里的tencent123456是暂时测试用的appId
-                    "tencentAuthId": "tencent123456",
-            ]
         }
         signed.initWith(buildTypes.release)
-        signed{
-            applicationIdSuffix PACKAGE_NAME_SUFFIX
-            manifestPlaceholders = [
-                    // 这里需要换成:tencent+你的AppId
-                    "tencentAuthId": TENCENT_AUTHID,
-            ]
+        signed {
+            applicationIdSuffix props['PACKAGE_NAME_SUFFIX']
         }
-    }
-
-    packagingOptions {
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/LICENSE'
-        exclude 'LICENSE'
-        exclude 'NOTICE'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/ASL2.0'
     }
 }
 
 dependencies {
     compile project(':share')
-    annotationProcessor project(':apt')
-    
+
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:appcompat-v7:24.2.1'
 
@@ -78,10 +62,10 @@ dependencies {
     androidTestCompile 'com.android.support:support-annotations:24.2.1'
     androidTestCompile 'com.android.support.test:runner:0.5'
     androidTestCompile 'com.android.support.test:rules:0.5'
-    
+
     // UiAutomator
     androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
-    
+
     // Espresso UI Testing
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
