@@ -45,13 +45,13 @@ public class SsoShareManager {
                 type = QQPlatform.ZONE;
                 break;
             case WEIBO_TIME_LINE:
-                type = WeiBoPlatform.TIME_LINE;
+                type = WeiBoPlatform.TIMELINE;
                 break;
             case WEIXIN_FRIEND:
                 type = WeiXinPlatform.FRIEND;
                 break;
             case WEIXIN_FRIEND_ZONE:
-                type = WeiXinPlatform.FRIEND_ZONE;
+                type = WeiXinPlatform.TIMELINE;
                 break;
             case WEIXIN_FAVORITE:
                 type = WeiXinPlatform.FAVORITE;

@@ -22,6 +22,6 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.github.tianzhijiexian:ShareLoginLib:dev-SNAPSHOT'
+    implementation 'com.github.tianzhijiexian:ShareLoginLib:master-SNAPSHOT'
     compileOnly 'com.android.support:appcompat-v7:27.1.1'
 }

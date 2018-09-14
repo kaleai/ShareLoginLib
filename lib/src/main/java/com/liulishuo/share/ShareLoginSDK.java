@@ -30,7 +30,7 @@ public class ShareLoginSDK {
         map.put(WeiBoPlatform.KEY_SCOPE, SlConfig.weiBoScope);
 
         map.put(WeiXinPlatform.KEY_APP_ID, SlConfig.weiXinAppId);
-        map.put(WeiXinPlatform.KEY_SECRET_KEY, SlConfig.weiXinSecret);
+        map.put(WeiXinPlatform.KEY_SECRET, SlConfig.weiXinSecret);
         
         ShareLoginLib.initPlatforms(map, Arrays.asList(
                 QQPlatform.class, WeiBoPlatform.class, WeiXinPlatform.class

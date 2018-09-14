@@ -14,9 +14,9 @@ public class AppApplication extends Application {
 
     private static final String TAG = "Application";
 
-    protected static String QQ_APPID, QQ_SCOPE,
-            WEIBO_APPID, WEIBO_SCOPE, WEIBO_REDIRECT_URL,
-            WEIXIN_APPID, WEIXIN_SECRET;
+    protected static String qq_app_id, qq_scope,
+            weibo_app_key, weibo_scope, weibo_redirect_url,
+            weixin_app_id, weixin_secret;
 
     @Override
     public void onCreate() {
@@ -32,9 +32,9 @@ public class AppApplication extends Application {
                 .debug(true)
                 .appName("test app")
                 .picTempFile(null)
-                .qq(QQ_APPID, QQ_SCOPE)
-                .weiBo(WEIBO_APPID, WEIBO_REDIRECT_URL, WEIBO_SCOPE)
-                .weiXin(WEIXIN_APPID, WEIXIN_SECRET)
+                .qq(qq_app_id, qq_scope)
+                .weiBo(weibo_app_key, weibo_redirect_url, weibo_scope)
+                .weiXin(weixin_app_id, weixin_secret)
                 .build();
 
         ShareLoginSDK.init(this, cfg);
@@ -44,12 +44,12 @@ public class AppApplication extends Application {
      * 初始化一些常量
      */
     protected void initConstant() {
-        QQ_APPID = "xxxxxxxxxxxx";
-        QQ_SCOPE = "xxxxxxxxxxxx";
-        WEIBO_APPID = "xxxxxxxxxxxx";
-        WEIBO_REDIRECT_URL = "xxxxxxxxxxxx";
-        WEIXIN_APPID = "xxxxxxxxxxxx";
-        WEIXIN_SECRET = "xxxxxxxxxxxx";
-        WEIBO_SCOPE = "xxxxxxxxxxxx";
+        qq_app_id = "xxxxxxxxxxxx";
+        qq_scope = "xxxxxxxxxxxx";
+        weibo_app_key = "xxxxxxxxxxxx";
+        weibo_redirect_url = "xxxxxxxxxxxx";
+        weixin_app_id = "xxxxxxxxxxxx";
+        weixin_secret = "xxxxxxxxxxxx";
+        weibo_scope = "xxxxxxxxxxxx";
     }
 }
