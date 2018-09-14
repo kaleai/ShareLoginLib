@@ -7,13 +7,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 27
-        consumerProguardFiles 'consumer-proguard-rules.pro'
+//        manifestPlaceholders = ["@tencentAuthId": ""]
     }
-
-    /*compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }*/
 
     buildTypes {
         release {
@@ -27,6 +22,6 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:1.0.2'
+    implementation 'com.github.tianzhijiexian:ShareLoginLib:dev-SNAPSHOT'
     compileOnly 'com.android.support:appcompat-v7:27.1.1'
 }

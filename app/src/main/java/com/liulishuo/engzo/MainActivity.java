@@ -101,10 +101,6 @@ public class MainActivity extends AppCompatActivity {
     public void onClick(View v) {
         SsoShareManager.ShareStateListener mShareListener = new ShareListener(this);
 
-        if (SsoLoginManager.listener != null || SsoShareManager.listener != null) {
-            throw new RuntimeException("static listener leaked");
-        }
-        
         int i = v.getId();
         switch (i) {
             case R.id.QQ登录:
@@ -128,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.分享到微博_不带跳转链接:
                 // 解开注释即可测试
                 if (mShareContent instanceof ShareContentWebPage) {
-//                    ((ShareContentWebPage) mShareContent).setUrl(null);
+                    ((ShareContentWebPage) mShareContent).setUrl(null);
                 }
                 SsoShareManager.share(this, SsoShareType.WEIBO_TIME_LINE, mShareContent, mShareListener);
                 break;

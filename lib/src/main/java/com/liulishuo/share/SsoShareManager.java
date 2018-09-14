@@ -1,20 +1,21 @@
 package com.liulishuo.share;
 
-import java.io.ByteArrayOutputStream;
-
 import android.app.Activity;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.liulishuo.share.activity.SL_QQHandlerActivity;
-import com.liulishuo.share.activity.SL_WeiBoHandlerActivity;
-import com.liulishuo.share.activity.SL_WeiXinHandlerActivity;
 import com.liulishuo.share.content.ShareContent;
-import com.liulishuo.share.content.ShareContentPic;
+import com.liulishuo.share.type.ShareContentType;
 import com.liulishuo.share.type.SsoShareType;
+
+import kale.sharelogin.ShareListener;
+import kale.sharelogin.ShareLoginLib;
+import kale.sharelogin.content.ShareContentPic;
+import kale.sharelogin.content.ShareContentText;
+import kale.sharelogin.content.ShareContentWebPage;
+import kale.sharelogin.qq.QQPlatform;
+import kale.sharelogin.weibo.WeiBoPlatform;
+import kale.sharelogin.weixin.WeiXinPlatform;
 
 import static com.liulishuo.share.type.SsoShareType.QQ_FRIEND;
 import static com.liulishuo.share.type.SsoShareType.QQ_ZONE;
@@ -29,127 +30,99 @@ import static com.liulishuo.share.type.SsoShareType.WEIXIN_FRIEND_ZONE;
  */
 public class SsoShareManager {
 
-    public static final String KEY_CONTENT = "KEY_CONTENT";
+    public static void share(@NonNull final Activity activity,
+            @SsoShareType final String shareType,
+            @NonNull final ShareContent shareContent,
+            @Nullable final ShareStateListener listener) {
 
-    public static ShareStateListener listener;
-
-    public static void share(@NonNull final Activity activity, @SsoShareType final String shareType,
-            @NonNull final ShareContent shareContent, @Nullable final ShareStateListener listener) {
-        SsoShareManager.listener = listener;
-
-        if (shareContent instanceof ShareContentPic) {
-            final ShareContentPic content = (ShareContentPic) shareContent;
-
-            new Thread() {
-                @Override
-                public void run() {
-                    super.run();
-                    content.setThumbBmpBytes(SlUtils.getImageThumbByteArr(content.getThumbBmp()));
-                    content.setLargeBmpPath(SlUtils.saveLargeBitmap(content.getLargeBmp()));
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            doShareSync(activity, shareType, shareContent, listener);
-                        }
-                    });
-                }
-            }.start();
-        } else {
-            doShareSync(activity, shareType, shareContent, listener);
-        }
-    }
-
-    private static void doShareSync(@NonNull Activity activity, @SsoShareType String shareType,
-            @NonNull ShareContent shareContent, @Nullable ShareStateListener listener) {
+        String type = null;
 
         switch (shareType) {
             case QQ_FRIEND:
+                type = QQPlatform.FRIEND;
+                break;
             case QQ_ZONE:
-                if (ShareLoginSDK.isQQInstalled(activity)) {
-                    activity.startActivity(
-                            new Intent(activity, SL_QQHandlerActivity.class)
-                                    .putExtra(SL_QQHandlerActivity.KEY_TO_FRIEND, shareType.equals(QQ_FRIEND))
-                                    .putExtra(KEY_CONTENT, shareContent)
-                                    .putExtra(ShareLoginSDK.KEY_IS_LOGIN_TYPE, false)
-                    );
-                    activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                } else if (listener != null) {
-                    listener.onError("未安装QQ");
-                }
+                type = QQPlatform.ZONE;
                 break;
             case WEIBO_TIME_LINE:
-                if (ShareLoginSDK.isWeiBoInstalled(activity)) {
-                    activity.startActivity(
-                            new Intent(activity, SL_WeiBoHandlerActivity.class)
-                                    .putExtra(KEY_CONTENT, shareContent)
-                                    .putExtra(ShareLoginSDK.KEY_IS_LOGIN_TYPE, false)
-                    );
-                    activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                } else if (listener != null) {
-                    listener.onError("未安装微博");
-                }
+                type = WeiBoPlatform.TIME_LINE;
                 break;
             case WEIXIN_FRIEND:
+                type = WeiXinPlatform.FRIEND;
+                break;
             case WEIXIN_FRIEND_ZONE:
+                type = WeiXinPlatform.FRIEND_ZONE;
+                break;
             case WEIXIN_FAVORITE:
-                if (ShareLoginSDK.isWeiXinInstalled(activity)) {
-                    new SL_WeiXinHandlerActivity().sendShareMsg(activity.getApplicationContext(), shareContent, shareType);
-                } else if (listener != null) {
-                    listener.onError("未安装微信");
-                }
+                type = WeiXinPlatform.FAVORITE;
                 break;
         }
+
+        kale.sharelogin.content.ShareContent newContent = null;
+
+        switch (shareContent.getType()) {
+            case ShareContentType.TEXT:
+                newContent = new ShareContentText(shareContent.getSummary());
+                break;
+            case ShareContentType.PIC:
+                newContent = new ShareContentPic(((com.liulishuo.share.content.ShareContentPic) shareContent).getLargeBmp());
+                break;
+            case ShareContentType.WEBPAGE:
+                newContent = new ShareContentWebPage(
+                        shareContent.getTitle(),
+                        shareContent.getSummary(),
+                        shareContent.getURL(),
+                        ((com.liulishuo.share.content.ShareContentPic) shareContent).getThumbBmp());
+                break;
+        }
+
+        ShareLoginLib.doShare(activity, type, newContent, new ShareListener() {
+            @Override
+            public void onSuccess() {
+                super.onSuccess();
+                if (listener != null) {
+                    listener.onSuccess();
+                }
+            }
+
+            @Override
+            public void onCancel() {
+                super.onCancel();
+                if (listener != null) {
+                    listener.onCancel();
+                }
+            }
+
+            @Override
+            public void onError(String errorMsg) {
+                super.onError(errorMsg);
+                if (listener != null) {
+                    listener.onError(errorMsg);
+                }
+            }
+
+            @Override
+            public void onComplete() {
+                if (listener != null) {
+                    listener.onComplete();
+                }
+            }
+        });
     }
 
     public static class ShareStateListener {
 
-        @CallSuper
         public void onSuccess() {
-            onComplete();
         }
 
-        @CallSuper
         public void onCancel() {
-            onComplete();
         }
 
-        @CallSuper
         public void onError(String msg) {
-            onComplete();
         }
 
-        @CallSuper
         protected void onComplete() {
-            SsoShareManager.recycle();
         }
     }
 
-    public static void recycle() {
-        listener = null;
-    }
-
-    @Nullable
-    static byte[] getImageThumbByteArr(@Nullable Bitmap bitmap) {
-        if (bitmap == null) {
-            return null;
-        }
-
-        final long size = '耀';
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(bitmap.getWidth() * bitmap.getHeight());
-
-        int options = 100;
-        bitmap.compress(Bitmap.CompressFormat.JPEG, options, outputStream);
-
-        while (outputStream.size() > size && options > 6) {
-            outputStream.reset();
-            options -= 6;
-            bitmap.compress(Bitmap.CompressFormat.JPEG, options, outputStream);
-        }
-
-//        bitmap.recycle();
-
-        return outputStream.toByteArray();
-    }
-    
 }

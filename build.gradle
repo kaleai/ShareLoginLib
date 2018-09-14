@@ -4,11 +4,12 @@ buildscript {
     repositories {
         jcenter()
         google()
+        maven { url 'https://jitpack.io' }
+        maven { url "https://dl.bintray.com/thelasterstar/maven/" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.4'
         classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.5.2'
-        classpath 'me.tatarka:gradle-retrolambda:3.6.0'
     }
 }
 
@@ -16,5 +17,7 @@ allprojects {
     repositories {
         jcenter()
         google()
+        maven { url 'https://jitpack.io' }
+        maven { url "https://dl.bintray.com/thelasterstar/maven/" }
     }
 }

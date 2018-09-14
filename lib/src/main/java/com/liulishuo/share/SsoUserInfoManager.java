@@ -34,13 +34,9 @@ public class SsoUserInfoManager {
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////////
-    // QQ
-    ///////////////////////////////////////////////////////////////////////////
-
     /**
-     * 得到用户的信息，是一个静态的基础方法
-     *
+     * 得到qq的用户信息
+     * 
      * @see "http://wiki.open.qq.com/wiki/website/get_simple_userinfo"
      */
     public static void getQQUserInfo(Context context, @NonNull final String accessToken, @NonNull final String userId,
@@ -65,10 +61,6 @@ public class SsoUserInfoManager {
             }
         });
     }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // 微博
-    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * 得到微博用户的信息
@@ -100,22 +92,6 @@ public class SsoUserInfoManager {
     // 微信
     ///////////////////////////////////////////////////////////////////////////
 
-    /**
-     * {
-     * "openid":"OPENID",
-     * "nickname":"NICKNAME",
-     * "sex":1,
-     * "province":"PROVINCE",
-     * "city":"CITY",
-     * "country":"COUNTRY",
-     * "headimgurl": "https://avatars3.githubusercontent.com/u/9552155?v=3&s=460",
-     * "privilege":[
-     * "PRIVILEGE1",
-     * "PRIVILEGE2"
-     * ],
-     * "unionid": " o6_bmasdasdsad6_2sgVt7hMZOPfL"
-     * }
-     */
     public static void getWeiXinUserInfo(Context context, @NonNull final String accessToken, @NonNull final String uid,
             @Nullable final UserInfoListener listener) {
 
