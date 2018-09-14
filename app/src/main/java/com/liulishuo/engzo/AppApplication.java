@@ -24,10 +24,6 @@ public class AppApplication extends Application {
 
         initConstant();
 
-        Log.d(TAG, "onCreate: weixin:" + ShareLoginSDK.isWeiXinInstalled(this));
-        Log.d(TAG, "onCreate: weibo:" + ShareLoginSDK.isWeiBoInstalled(this));
-        Log.d(TAG, "onCreate: qq:" + ShareLoginSDK.isQQInstalled(this));
-
         SlConfig cfg = new SlConfig.Builder()
                 .debug(true)
                 .appName("test app")
@@ -38,6 +34,10 @@ public class AppApplication extends Application {
                 .build();
 
         ShareLoginSDK.init(this, cfg);
+
+        Log.d(TAG, "onCreate: weixin:" + ShareLoginSDK.isWeiXinInstalled(this));
+        Log.d(TAG, "onCreate: weibo:" + ShareLoginSDK.isWeiBoInstalled(this));
+        Log.d(TAG, "onCreate: qq:" + ShareLoginSDK.isQQInstalled(this));
     }
 
     /**
@@ -45,11 +45,20 @@ public class AppApplication extends Application {
      */
     protected void initConstant() {
         qq_app_id = "xxxxxxxxxxxx";
-        qq_scope = "xxxxxxxxxxxx";
+        qq_scope = "get_user_info,"
+                + "get_simple_userinfo,"
+                + "add_share,"
+                + "add_topic,"
+                + "add_pic_t";
+
         weibo_app_key = "xxxxxxxxxxxx";
         weibo_redirect_url = "xxxxxxxxxxxx";
+        weibo_scope = "friendships_groups_read,"
+                + "friendships_groups_write,"
+                + "statuses_to_me_read,"
+                + "follow_app_official_microblog";
+
         weixin_app_id = "xxxxxxxxxxxx";
         weixin_secret = "xxxxxxxxxxxx";
-        weibo_scope = "xxxxxxxxxxxx";
     }
 }

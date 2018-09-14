@@ -12,7 +12,7 @@ android {
     buildToolsVersion '27.0.3'
 
     defaultConfig {
-        applicationId "com"
+        applicationId props['PACKAGE_NAME']
         minSdkVersion 16
         targetSdkVersion 27
         versionCode 1
@@ -32,18 +32,14 @@ android {
 
     buildTypes {
         debug {
-            applicationIdSuffix '.liulishuo.debug'
+            signingConfig signingConfigs.release
         }
         release {
             minifyEnabled false
             shrinkResources false // 是否去除无效的资源文件
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            
             signingConfig signingConfigs.release
-            applicationIdSuffix '.liulishuo.release'
-        }
-        signed.initWith(buildTypes.release)
-        signed {
-            applicationIdSuffix props['PACKAGE_NAME_SUFFIX']
         }
     }
     compileOptions {
@@ -56,9 +52,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     implementation project(':lib')
-
-//    implementation 'com.github.tianzhijiexian:ShareLoginLib:adapter-SNAPSHOT'
-    implementation 'com.github.tianzhijiexian:ShareLoginLib:master-SNAPSHOT'
+    implementation 'com.github.tianzhijiexian:ShareLoginLib:a408cd3651'
 
     // support lib and image lib
     implementation 'com.squareup.picasso:picasso:2.5.2'

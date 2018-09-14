@@ -15,8 +15,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-        signed{}
-        debug{}
     }
     
     compileOptions {
@@ -26,6 +24,6 @@ android {
 }
 
 dependencies {
-    compileOnly 'com.github.tianzhijiexian:ShareLoginLib:master-SNAPSHOT'
+    compileOnly 'com.github.tianzhijiexian:ShareLoginLib:a408cd3651'
     compileOnly 'com.android.support:appcompat-v7:27.1.1'
 }
