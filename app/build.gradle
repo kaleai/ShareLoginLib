@@ -58,7 +58,8 @@ dependencies {
     implementation project(':lib')
 
 //    implementation 'com.github.tianzhijiexian:ShareLoginLib:adapter-SNAPSHOT'
-    
+    implementation 'com.github.tianzhijiexian:ShareLoginLib:master-SNAPSHOT'
+
     // support lib and image lib
     implementation 'com.squareup.picasso:picasso:2.5.2'
     implementation 'com.android.support:appcompat-v7:27.1.1'

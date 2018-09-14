@@ -5,13 +5,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.liulishuo.share.type.SsoLoginType;
-import com.sina.weibo.sdk.exception.WeiboException;
-import com.sina.weibo.sdk.net.AsyncWeiboRunner;
-import com.sina.weibo.sdk.net.RequestListener;
-import com.sina.weibo.sdk.net.WeiboParameters;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import kale.sharelogin.IPlatform;
+import kale.sharelogin.LoginListener;
+import kale.sharelogin.ShareLoginLib;
+import kale.sharelogin.qq.QQPlatform;
+import kale.sharelogin.weibo.WeiBoPlatform;
+import kale.sharelogin.weixin.WeiXinPlatform;
 
 /**
  * @author Kale
@@ -19,139 +19,60 @@ import org.json.JSONObject;
  */
 public class SsoUserInfoManager {
 
-    public static void getUserInfo(Context context, @SsoLoginType String type, @NonNull String accessToken, @NonNull String uid,
+    public static void getQQUserInfo(Context context, @NonNull final String accessToken, @NonNull final String uid,
             @Nullable final UserInfoListener listener) {
-        switch (type) {
-            case SsoLoginType.QQ:
-                getQQUserInfo(context, accessToken, uid, listener);
-                break;
-            case SsoLoginType.WEIBO:
-                getWeiBoUserInfo(context, accessToken, uid, listener);
-                break;
-            case SsoLoginType.WEIXIN:
-                getWeiXinUserInfo(context, accessToken, uid, listener);
-                break;
-        }
+        getUserInfo(context, SsoLoginType.QQ, accessToken, uid, listener);
     }
 
-    /**
-     * 得到qq的用户信息
-     * 
-     * @see "http://wiki.open.qq.com/wiki/website/get_simple_userinfo"
-     */
-    public static void getQQUserInfo(Context context, @NonNull final String accessToken, @NonNull final String userId,
-            @Nullable final UserInfoListener listener) {
-
-        AsyncWeiboRunner runner = new AsyncWeiboRunner(context);
-        WeiboParameters params = new WeiboParameters(null);
-        params.put("access_token", accessToken);
-        params.put("openid", userId);
-        params.put("oauth_consumer_key", SlConfig.qqAppId);
-        params.put("format", "json");
-
-        runner.requestAsync("https://graph.qq.com/user/get_simple_userinfo", params, "GET", new UserInfoRequestListener(listener) {
-            @Override
-            OAuthUserInfo onSuccess(JSONObject jsonObj) throws JSONException {
-                OAuthUserInfo userInfo = new OAuthUserInfo();
-                userInfo.nickName = jsonObj.getString("nickname");
-                userInfo.sex = jsonObj.getString("gender");
-                userInfo.headImgUrl = jsonObj.getString("figureurl_qq_1");
-                userInfo.userId = userId;
-                return userInfo;
-            }
-        });
-    }
-
-    /**
-     * 得到微博用户的信息
-     *
-     * @see "http://open.weibo.com/wiki/2/users/show"
-     */
     public static void getWeiBoUserInfo(Context context, final @NonNull String accessToken, final @NonNull String uid,
             @Nullable final UserInfoListener listener) {
-
-        AsyncWeiboRunner runner = new AsyncWeiboRunner(context);
-        WeiboParameters params = new WeiboParameters(null);
-        params.put("access_token", accessToken);
-        params.put("uid", uid);
-        runner.requestAsync("https://api.weibo.com/2/users/show.json", params, "GET", new UserInfoRequestListener(listener) {
-            @Override
-            OAuthUserInfo onSuccess(JSONObject jsonObj) throws JSONException {
-                OAuthUserInfo userInfo = new OAuthUserInfo();
-                userInfo.nickName = jsonObj.getString("screen_name");
-                userInfo.sex = jsonObj.getString("gender");
-                userInfo.headImgUrl = jsonObj.getString("avatar_large");
-                userInfo.userId = jsonObj.getString("id");
-                return userInfo;
-            }
-        });
-
+        getUserInfo(context, SsoLoginType.WEIBO, accessToken, uid, listener);
     }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // 微信
-    ///////////////////////////////////////////////////////////////////////////
 
     public static void getWeiXinUserInfo(Context context, @NonNull final String accessToken, @NonNull final String uid,
             @Nullable final UserInfoListener listener) {
-
-        AsyncWeiboRunner runner = new AsyncWeiboRunner(context);
-        WeiboParameters params = new WeiboParameters(null);
-        params.put("access_token", accessToken);
-        params.put("openid", uid);
-
-        runner.requestAsync("https://api.weixin.qq.com/sns/userinfo", params, "GET", new UserInfoRequestListener(listener) {
-
-            @Override
-            OAuthUserInfo onSuccess(JSONObject jsonObj) throws JSONException {
-                OAuthUserInfo userInfo = new OAuthUserInfo();
-                userInfo.nickName = jsonObj.getString("nickname");
-                userInfo.sex = jsonObj.getString("sex");
-                // 用户头像，最后一个数值代表正方形头像大小（有0、46、64、96、132数值可选，0代表640*640正方形头像），用户没有头像时该项为空
-                userInfo.headImgUrl = jsonObj.getString("headimgurl");
-                userInfo.userId = jsonObj.getString("unionid");
-                return userInfo;
-            }
-        });
+        getUserInfo(context, SsoLoginType.WEIXIN, accessToken, uid, listener);
     }
+    
+    public static void getUserInfo(Context context, @SsoLoginType String type, @NonNull String accessToken, @NonNull String uid,
+            @Nullable final UserInfoListener listener) {
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Common
-    ///////////////////////////////////////////////////////////////////////////
-
-    private abstract static class UserInfoRequestListener implements RequestListener {
-
-        private UserInfoListener listener;
-
-        UserInfoRequestListener(UserInfoListener listener) {
-            this.listener = listener;
+        Class<? extends IPlatform> platform = null;
+        
+        switch (type) {
+            case SsoLoginType.QQ:
+                platform = QQPlatform.class;
+                break;
+            case SsoLoginType.WEIBO:
+                platform = WeiBoPlatform.class;
+                break;
+            case SsoLoginType.WEIXIN:
+                platform = WeiXinPlatform.class;
+                break;
         }
 
-        @Override
-        public void onComplete(String s) {
-            OAuthUserInfo userInfo = null;
-            try {
-                userInfo = onSuccess(new JSONObject(s));
-            } catch (JSONException e) {
-                e.printStackTrace();
+        ShareLoginLib.getUserInfo(context, platform, accessToken, uid, new LoginListener() {
+            @Override
+            public void onReceiveUserInfo(@NonNull kale.sharelogin.OAuthUserInfo userInfo) {
+                super.onReceiveUserInfo(userInfo);
+                OAuthUserInfo info = new OAuthUserInfo();
+                info.headImgUrl = userInfo.headImgUrl;
+                info.nickName = userInfo.nickName;
+                info.sex = userInfo.sex;
+                info.userId = userInfo.userId;
                 if (listener != null) {
-                    listener.onError(e.getMessage());
+                    listener.onSuccess(info);
                 }
             }
-            if (listener != null && userInfo != null) {
-                listener.onSuccess(userInfo);
-            }
-        }
 
-        abstract OAuthUserInfo onSuccess(JSONObject jsonObj) throws JSONException;
-
-        @Override
-        public void onWeiboException(WeiboException e) {
-            e.printStackTrace();
-            if (listener != null) {
-                listener.onError(e.getMessage());
+            @Override
+            public void onError(String errorMsg) {
+                super.onError(errorMsg);
+                if (listener != null) {
+                    listener.onError(errorMsg);
+                }
             }
-        }
+        });
     }
 
     public interface UserInfoListener {
