@@ -26,6 +26,6 @@ android {
 }
 
 dependencies {
-    implementation 'com.github.tianzhijiexian:ShareLoginLib:master-SNAPSHOT'
+    api 'com.github.tianzhijiexian:ShareLoginLib:master-SNAPSHOT'
     compileOnly 'com.android.support:appcompat-v7:27.1.1'
 }

@@ -56,6 +56,8 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     implementation project(':lib')
+
+//    implementation 'com.github.tianzhijiexian:ShareLoginLib:adapter-SNAPSHOT'
     
     // support lib and image lib
     implementation 'com.squareup.picasso:picasso:2.5.2'
